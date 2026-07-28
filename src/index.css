@@ -12,7 +12,7 @@
   --color-accent-700: #86663f;
   --font-heading: 'Playfair Display', serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Malgun Gothic', sans-serif;
-  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px;
   --space-6: 24px; --space-8: 40px;
   --shadow-md: 0 8px 30px rgba(0,0,0,.45);
 }
