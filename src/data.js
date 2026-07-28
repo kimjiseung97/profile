@@ -65,7 +65,7 @@ export const certs = ['정보처리산업기사'];
 export const skillGroups = [
   { name: 'Hard Skills', items: ['SQL', 'Spring Boot', 'Java', 'Claude / Gemini / ChatGPT'] },
   { name: 'Soft Skills', items: ['커뮤니케이션', '협업'] },
-  { name: 'Tools', items: ['IntelliJ', 'VS Code'] }
+  { name: 'Tools', items: ['IntelliJ', 'VS Code', 'Antigravity'] }
 ];
 
 export const projects = [
