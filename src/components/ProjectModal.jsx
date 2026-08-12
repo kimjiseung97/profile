@@ -107,6 +107,11 @@ export default function ProjectModal({ project, onClose }) {
         )}
 
         <div className="dialog-actions">
+          {p.liveUrl && (
+            <a className="btn btn-primary" href={p.liveUrl} target="_blank" rel="noopener noreferrer">
+              <i className="ph ph-arrow-square-out" />사이트 방문
+            </a>
+          )}
           <button className="btn btn-secondary" onClick={handleClose}>닫기</button>
         </div>
       </div>
