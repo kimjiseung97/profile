@@ -41,7 +41,7 @@ export default function ProjectModal({ index, onClose }) {
         {hasSections ? (
           <div className="dialog-sections">
             <section className="dialog-section">
-              <div className="dialog-section-heading"><i className="ph ph-buildings" />회사 개요</div>
+              <div className="dialog-section-heading"><i className="ph ph-buildings" />프로젝트 개요</div>
               <p className="dialog-section-text">{p.overview}</p>
             </section>
 

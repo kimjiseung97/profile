@@ -74,6 +74,37 @@ export const skillGroups = [
 ];
 
 export const projects = [
+  { tag: '개인 프로젝트', name: 'StockNews - 관심종목 뉴스 다이제스트 서비스', thumb: null, detail: [
+    'SEC EDGAR 데이터 기반 미국 주식 유니버스 시딩 배치 구축',
+    '사용자 관심종목 등록 및 세션 기반 인증 API 개발',
+    '관심종목별 뉴스 조회 후 매일 다이제스트 메일 발송 배치 개발',
+    'Spring Batch 멀티스레드 청크 처리로 대량 유저 뉴스 발송 병렬화',
+    'GCP VM + Docker Compose + Caddy 리버스 프록시로 자체 배포 및 CI/CD 구축'
+  ],
+    overview: '미국 주식 유니버스를 SEC 데이터로 시딩하고, 회원가입한 사용자가 관심종목을 등록하면 매일 해당 종목 관련 뉴스를 모아 이메일로 발송해주는 개인 사이드 프로젝트입니다. Kotlin + Spring Boot 백엔드와 React + TypeScript 프론트엔드를 하나의 저장소에서 함께 운영하며, 기획부터 설계·개발·배포까지 전 과정을 직접 진행했습니다.',
+    stack: ['Kotlin', 'Spring Boot 4.1', 'Spring Batch', 'QueryDSL', 'MySQL/MariaDB', 'React 19', 'TypeScript', 'Vite', 'Docker', 'GitHub Actions'],
+    devItems: [
+      { heading: '종목 시딩/보강 배치', items: [
+        'SEC EDGAR 티커 목록 API로 신규 종목 시딩(stockSeedJob)',
+        'SEC 기업프로필 조회로 SIC 코드 기반 테마 매핑(stockThemeEnrichJob)',
+        'Naver 검색 API로 종목 한글명 보강(stockKoreanNameEnrichJob)'
+      ]},
+      { heading: '뉴스 다이제스트 배치', items: [
+        'cron 스케줄러로 매일 활성 유저 조회 후 관심종목별 Naver 뉴스 검색',
+        '유저 20명 단위 청크 분할 + 전용 스레드풀(newsDispatchTaskExecutor)로 병렬 처리',
+        '다이제스트 메일 발송 및 배치 이력/좀비 배치 정리 스케줄러 별도 구성'
+      ]},
+      { heading: 'API/인증', items: [
+        '세션 기반 회원가입/로그인 및 이메일 인증 API 개발',
+        '관심종목 등록/조회 CRUD API 개발',
+        '공통 ApiResponseAdvice/GlobalExceptionHandler로 응답·에러 포맷 통일'
+      ]},
+      { heading: '배포', items: [
+        'Dockerfile로 Spring Boot 앱 컨테이너화, docker-compose로 MariaDB·Caddy와 함께 구성',
+        'GitHub Actions로 main 브랜치 push 시 SSH 접속 후 git pull + docker compose up -d --build 자동 배포'
+      ]}
+    ]
+  },
   { tag: '2026', name: '프라뱅(Pravang) 가상자산 거래소 시스템 유지보수 및 신규 개발', thumb: pravangThumb, detail: [
     '거래소 기능 유지보수 및 고도화',
     'Spring Boot 버전 업 마이그레이션 및 안정화',
