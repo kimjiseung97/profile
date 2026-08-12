@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ArchitectureDiagram from './ArchitectureDiagram';
 
 const CLOSE_DURATION = 180;
 
@@ -31,7 +32,7 @@ export default function ProjectModal({ project, onClose }) {
 
   return (
     <div className={`dialog-backdrop${closing ? ' closing' : ''}`} onClick={handleClose}>
-      <div className={`dialog${hasSections ? ' dialog-lg' : ''}${closing ? ' closing' : ''}`} onClick={(e) => e.stopPropagation()}>
+      <div className={`dialog${hasSections ? ' dialog-lg' : ''}${p.architecture ? ' dialog-xl' : ''}${closing ? ' closing' : ''}`} onClick={(e) => e.stopPropagation()}>
         <div className="dialog-title">{p.name}</div>
         <div className="tag tag-outline" style={{ width: 'fit-content', marginBottom: 'var(--space-4)' }}>
           {p.tag}
@@ -49,6 +50,20 @@ export default function ProjectModal({ project, onClose }) {
                 <div className="dialog-section-heading"><i className="ph ph-stack" />주요 기술 스택</div>
                 <div className="stack-row">
                   {p.stack.map((s) => <span key={s} className="tag tag-accent">{s}</span>)}
+                </div>
+              </section>
+            )}
+
+            {p.architecture && (
+              <section className="dialog-section">
+                <div className="dialog-section-heading"><i className="ph ph-flow-arrow" />아키텍처</div>
+                <div className="arch-list">
+                  {p.architecture.map((a, i) => (
+                    <div className="arch-item" key={i}>
+                      <div className="arch-item-title">{a.title}</div>
+                      <ArchitectureDiagram diagram={a.diagram} />
+                    </div>
+                  ))}
                 </div>
               </section>
             )}

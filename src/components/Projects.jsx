@@ -44,17 +44,20 @@ function normalizeScroll(track) {
 export default function Projects({ id, eyebrow, title, items, setRef, isVisible, onSelect }) {
   const trackRef = useRef(null);
   const drag = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false, lastX: 0, lastT: 0, vx: 0 });
-  const loop = [...items, ...items, ...items];
+  // The infinite-scroll clone trick only makes sense once there's more than
+  // one card to loop through — with a single item it just shows 3 copies.
+  const isLoopable = items.length > 1;
+  const loop = isLoopable ? [...items, ...items, ...items] : items;
 
   useEffect(() => {
     const track = trackRef.current;
-    if (!track) return;
+    if (!track || !isLoopable) return;
     track.scrollLeft = track.scrollWidth / 3;
-  }, []);
+  }, [isLoopable]);
 
   const scrollByCard = (dir) => {
     const track = trackRef.current;
-    if (!track) return;
+    if (!track || !isLoopable) return;
     const card = track.querySelector('.proj-card');
     const step = card ? card.getBoundingClientRect().width + 24 : track.clientWidth * 0.8;
     const target = track.scrollLeft + dir * step;
@@ -93,7 +96,7 @@ export default function Projects({ id, eyebrow, title, items, setRef, isVisible,
     const track = trackRef.current;
     const momentum = drag.current.vx * -220;
     const target = track.scrollLeft + momentum;
-    animateScrollTo(track, target, 520, () => normalizeScroll(track));
+    animateScrollTo(track, target, 520, () => isLoopable && normalizeScroll(track));
   };
 
   // setPointerCapture (used for mouse-drag) redirects the native click's
@@ -148,14 +151,16 @@ export default function Projects({ id, eyebrow, title, items, setRef, isVisible,
             })}
           </div>
         </div>
-        <div className="proj-controls">
-          <button type="button" className="proj-arrow" onClick={() => scrollByCard(-1)} aria-label="이전 프로젝트">
-            <i className="ph ph-caret-left" />
-          </button>
-          <button type="button" className="proj-arrow" onClick={() => scrollByCard(1)} aria-label="다음 프로젝트">
-            <i className="ph ph-caret-right" />
-          </button>
-        </div>
+        {isLoopable && (
+          <div className="proj-controls">
+            <button type="button" className="proj-arrow" onClick={() => scrollByCard(-1)} aria-label="이전 프로젝트">
+              <i className="ph ph-caret-left" />
+            </button>
+            <button type="button" className="proj-arrow" onClick={() => scrollByCard(1)} aria-label="다음 프로젝트">
+              <i className="ph ph-caret-right" />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

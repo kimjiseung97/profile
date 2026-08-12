@@ -83,6 +83,34 @@ export const sideProjects = [
   ],
     overview: '미국 주식 유니버스를 SEC 데이터로 시딩하고, 회원가입한 사용자가 관심종목을 등록하면 매일 해당 종목 관련 뉴스를 모아 이메일로 발송해주는 개인 사이드 프로젝트입니다. Kotlin + Spring Boot 백엔드와 React + TypeScript 프론트엔드를 하나의 저장소에서 함께 운영하며, 기획부터 설계·개발·배포까지 전 과정을 직접 진행했습니다.',
     stack: ['Kotlin', 'Spring Boot 4.1', 'Spring Batch', 'QueryDSL', 'MySQL/MariaDB', 'React 19', 'TypeScript', 'Vite', 'Docker', 'GitHub Actions'],
+    architecture: [
+      { title: '요청 흐름 (동기 API)', diagram: `flowchart LR
+    User(["사용자"]) --> React["React 19 + Vite<br/>(TypeScript / SCSS Modules)"]
+    React -- "Axios (세션 쿠키)" --> Controller["Spring Boot Controller<br/>(세션 기반 인증)"]
+    Controller --> Service["Service Layer<br/>(비즈니스 로직)"]
+    Service --> Repo["JPA / QueryDSL Repository"]
+    Repo --> MySQL[("MySQL<br/>(Aiven 원격 호스팅)")]
+    Controller -. "ApiResponseAdvice" .-> React` },
+      { title: '배치 흐름 (종목 시딩 · 뉴스 발송)', diagram: `flowchart TD
+    subgraph Seed["종목 시딩"]
+        direction LR
+        SecTicker["SEC EDGAR<br/>티커 목록 API"] --> SeedJob["stockSeedJob<br/>(신규 종목 insert)"]
+        SeedJob --> ThemeJob["stockThemeEnrichJob<br/>(SEC 기업프로필 → SIC 테마 매핑)"]
+        NaverName["Naver 검색 API"] --> KoreanJob["stockKoreanNameEnrichJob<br/>(한글 종목명 보강)"]
+        ThemeJob --> DB1[("TB_STOCK")]
+        KoreanJob --> DB1
+    end
+    subgraph Dispatch["일일 뉴스 다이제스트"]
+        direction LR
+        Scheduler["NewsDispatchScheduler<br/>(cron)"] --> Job["newsDispatchJob<br/>(멀티스레드 청크 스텝)"]
+        Job --> Reader["Reader: 활성 유저 조회"]
+        Reader --> Processor["Processor: 관심종목별<br/>Naver 뉴스 조회"]
+        NaverNews["Naver 뉴스 검색 API"] --> Processor
+        Processor --> Writer["Writer: 다이제스트 메일 발송"]
+        Writer --> Mail(["사용자 이메일함"])
+    end
+    DB1 -.-> Reader` }
+    ],
     devItems: [
       { heading: '종목 시딩/보강 배치', items: [
         'SEC EDGAR 티커 목록 API로 신규 종목 시딩(stockSeedJob)',
