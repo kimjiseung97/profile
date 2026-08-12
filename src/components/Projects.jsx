@@ -1,7 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { projects } from '../data';
-
-const loop = [...projects, ...projects, ...projects];
 
 const easeInOutQuart = (t) => (t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2);
 
@@ -44,9 +41,10 @@ function normalizeScroll(track) {
   }
 }
 
-export default function Projects({ setRef, isVisible, onSelect }) {
+export default function Projects({ id, eyebrow, title, items, setRef, isVisible, onSelect }) {
   const trackRef = useRef(null);
   const drag = useRef({ active: false, startX: 0, scrollLeft: 0, moved: false, lastX: 0, lastT: 0, vx: 0 });
+  const loop = [...items, ...items, ...items];
 
   useEffect(() => {
     const track = trackRef.current;
@@ -109,21 +107,21 @@ export default function Projects({ setRef, isVisible, onSelect }) {
       const el = document.elementFromPoint(e.clientX, e.clientY);
       const cardEl = el && el.closest('.proj-card');
       if (cardEl && cardEl.dataset.index != null) {
-        onSelect(Number(cardEl.dataset.index));
+        onSelect(items[Number(cardEl.dataset.index)]);
       }
     }
   };
 
   const handleSelect = (i) => {
     if (drag.current.moved) return;
-    onSelect(i);
+    onSelect(items[i]);
   };
 
   return (
-    <section id="projects" ref={setRef('projects')} className={isVisible ? 'in-view' : ''}>
+    <section id={id} ref={setRef(id)} className={isVisible ? 'in-view' : ''}>
       <div className="reveal">
-        <div className="eyebrow">PROJECTS</div>
-        <h2 className="h2">프로젝트</h2>
+        <div className="eyebrow">{eyebrow}</div>
+        <h2 className="h2">{title}</h2>
         <div className="proj-carousel">
           <div
             className="proj-track"
@@ -135,7 +133,7 @@ export default function Projects({ setRef, isVisible, onSelect }) {
             onPointerCancel={finishDrag}
           >
             {loop.map((p, i) => {
-              const realIndex = i % projects.length;
+              const realIndex = i % items.length;
               return (
                 <div className="card elev-md proj-card" key={`${p.name}-${i}`} data-index={realIndex} onClick={() => handleSelect(realIndex)}>
                   <div className="proj-thumb">

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { projects } from '../data';
 
 const CLOSE_DURATION = 180;
 
@@ -14,15 +13,15 @@ function GroupList({ groups }) {
   ));
 }
 
-export default function ProjectModal({ index, onClose }) {
+export default function ProjectModal({ project, onClose }) {
   const [closing, setClosing] = useState(false);
 
   useEffect(() => {
-    if (index != null) setClosing(false);
-  }, [index]);
+    if (project != null) setClosing(false);
+  }, [project]);
 
-  if (index == null) return null;
-  const p = projects[index];
+  if (project == null) return null;
+  const p = project;
   const hasSections = Boolean(p.overview);
 
   const handleClose = () => {

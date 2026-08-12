@@ -73,8 +73,8 @@ export const skillGroups = [
   { name: 'Tools', items: ['IntelliJ', 'VS Code', 'Antigravity'] }
 ];
 
-export const projects = [
-  { tag: '개인 프로젝트', name: 'StockNews - 관심종목 뉴스 다이제스트 서비스', thumb: null, detail: [
+export const sideProjects = [
+  { tag: '2026', name: 'StockNews - 관심종목 뉴스 다이제스트 서비스', thumb: null, detail: [
     'SEC EDGAR 데이터 기반 미국 주식 유니버스 시딩 배치 구축',
     '사용자 관심종목 등록 및 세션 기반 인증 API 개발',
     '관심종목별 뉴스 조회 후 매일 다이제스트 메일 발송 배치 개발',
@@ -104,7 +104,10 @@ export const projects = [
         'GitHub Actions로 main 브랜치 push 시 SSH 접속 후 git pull + docker compose up -d --build 자동 배포'
       ]}
     ]
-  },
+  }
+];
+
+export const projects = [
   { tag: '2026', name: '프라뱅(Pravang) 가상자산 거래소 시스템 유지보수 및 신규 개발', thumb: pravangThumb, detail: [
     '거래소 기능 유지보수 및 고도화',
     'Spring Boot 버전 업 마이그레이션 및 안정화',
@@ -365,5 +368,6 @@ export const navSections = [
   { id: 'education', label: 'EDUCATION' },
   { id: 'skills', label: 'SKILLS' },
   { id: 'projects', label: 'PROJECTS' },
+  { id: 'side-projects', label: 'SIDE PROJECTS' },
   { id: 'contact', label: 'CONTACT' }
 ];
