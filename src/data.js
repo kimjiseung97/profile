@@ -87,13 +87,14 @@ export const skillGroups = [
 export const sideProjects = [
   {
     tag: '2026', name: 'StockNews - 관심종목 뉴스 다이제스트 서비스', thumb: stockNewsThumb, liveUrl: 'https://stockmailnews.duckdns.org/stock-search', detail: [
-      'SEC EDGAR 데이터 기반 미국 주식 유니버스 시딩 배치 구축',
-      '사용자 관심종목 등록 및 세션 기반 인증 API 개발',
-      '관심종목별 뉴스 조회 후 매일 다이제스트 메일 발송 배치 개발',
-      'Spring Batch 멀티스레드 청크 처리로 대량 유저 뉴스 발송 병렬화',
+      'SEC EDGAR · 나스닥 상장목록 · 토스증권 오픈API 3개 소스 기반 미국 주식 유니버스 시딩 배치 구축',
+      '테마/한글명/영문명/상세정보 보강 및 상장폐지 감지까지 종목 데이터 검증 배치 파이프라인 설계',
+      '사용자 관심종목 등록 및 세션 기반 인증(회원가입·로그인·비밀번호 재설정) API 개발',
+      '종목별 뉴스를 수집해 적재하는 배치와, 관심종목 기반 다이제스트 메일 발송 배치를 분리 구축',
+      'Spring Batch 멀티스레드 청크 처리로 대량 종목/유저 데이터 처리 병렬화',
       'GCP VM + Docker Compose + Caddy 리버스 프록시로 자체 배포 및 CI/CD 구축'
     ],
-    overview: '미국 주식 유니버스를 SEC 데이터로 시딩하고, 회원가입한 사용자가 관심종목을 등록하면 매일 해당 종목 관련 뉴스를 모아 이메일로 발송해주는 개인 사이드 프로젝트입니다. Kotlin + Spring Boot 백엔드와 React + TypeScript 프론트엔드를 하나의 저장소에서 함께 운영하며, 기획부터 설계·개발·배포까지 전 과정을 직접 진행했습니다.',
+    overview: '미국 주식 유니버스를 SEC·나스닥·토스증권 등 여러 소스로 시딩하고, 테마·종목명·상세정보 보강과 상장폐지 감지까지 이어지는 데이터 검증 배치 파이프라인을 직접 설계했습니다. 회원가입한 사용자가 관심종목을 등록하면 매일 해당 종목 관련 뉴스를 모아 이메일로 발송해주는 개인 사이드 프로젝트로, Kotlin + Spring Boot 백엔드와 React + TypeScript 프론트엔드를 하나의 저장소에서 함께 운영하며 기획부터 설계·개발·배포까지 전 과정을 직접 진행했습니다.',
     stack: ['Kotlin', 'Spring Boot 4.1', 'Spring Batch', 'QueryDSL', 'MySQL/MariaDB', 'React 19', 'TypeScript', 'Vite', 'Docker', 'GitHub Actions'],
     architecture: [
       {
@@ -102,24 +103,43 @@ export const sideProjects = [
     React -- "Axios (세션 쿠키)" --> Controller["Spring Boot Controller<br/>(세션 기반 인증)"]
     Controller --> Service["Service Layer<br/>(비즈니스 로직)"]
     Service --> Repo["JPA / QueryDSL Repository"]
-    Repo --> MySQL[("MySQL<br/>(Aiven 원격 호스팅)")]
+    Repo --> MySQL[("MySQL/MariaDB<br/>(Aiven 원격 호스팅)")]
     Controller -. "ApiResponseAdvice" .-> React` },
       {
-        title: '배치 흐름 (종목 시딩 · 뉴스 발송)', diagram: `flowchart TD
+        title: '배치 흐름 (종목 시딩/보강 · 뉴스 수집 · 다이제스트 발송)', diagram: `flowchart TD
     subgraph Seed["종목 시딩"]
         direction LR
-        SecTicker["SEC EDGAR<br/>티커 목록 API"] --> SeedJob["stockSeedJob<br/>(신규 종목 insert)"]
-        SeedJob --> ThemeJob["stockThemeEnrichJob<br/>(SEC 기업프로필 → SIC 테마 매핑)"]
-        NaverName["Naver 검색 API"] --> KoreanJob["stockKoreanNameEnrichJob<br/>(한글 종목명 보강)"]
-        ThemeJob --> DB1[("TB_STOCK")]
+        SecTicker["SEC EDGAR<br/>티커 목록"] --> SeedJob["stockSeedJob<br/>(신규 종목 insert)"]
+        Nasdaq["나스닥/그 외<br/>거래소 상장목록"] --> SeedJob
+        Toss["토스증권<br/>오픈 API"] --> SeedJob
+        SeedJob --> DB1[("TB_STOCK")]
+    end
+    subgraph Enrich["종목 데이터 보강/검증"]
+        direction LR
+        DB1 --> ThemeJob["stockThemeEnrichJob<br/>(SIC 코드 → 테마 매핑)"]
+        DB1 --> KoreanJob["stockKoreanNameEnrichJob<br/>(Naver 한글명 보강)"]
+        DB1 --> EnglishJob["stockEnglishNameEnrichJob<br/>(영문명 보강)"]
+        DB1 --> DetailJob["stockDetailEnrichJob<br/>(Naver/Finnhub 상세정보)"]
+        DB1 --> DelistJob["stockDelistCheckJob<br/>(상장폐지 감지)"]
+        ThemeJob --> DB1
         KoreanJob --> DB1
+        EnglishJob --> DB1
+        DetailJob --> DB1
+        DelistJob --> DB1
+    end
+    subgraph Collect["종목 뉴스 수집"]
+        direction LR
+        DB1 --> CollectJob["stockNewsCollectJob<br/>(멀티스레드 청크 스텝)"]
+        NaverNewsC["Naver 뉴스 검색 API"] --> CollectJob
+        CollectJob --> DB2[("TB_STOCK_NEWS<br/>(COLLECTED_AT 인덱스)")]
+        Cleanup["StockNewsCleanupScheduler<br/>(7일 보관 정책)"] -.-> DB2
     end
     subgraph Dispatch["일일 뉴스 다이제스트"]
         direction LR
         Scheduler["NewsDispatchScheduler<br/>(cron)"] --> Job["newsDispatchJob<br/>(멀티스레드 청크 스텝)"]
         Job --> Reader["Reader: 활성 유저 조회"]
         Reader --> Processor["Processor: 관심종목별<br/>Naver 뉴스 조회"]
-        NaverNews["Naver 뉴스 검색 API"] --> Processor
+        NaverNewsD["Naver 뉴스 검색 API"] --> Processor
         Processor --> Writer["Writer: 다이제스트 메일 발송"]
         Writer --> Mail(["사용자 이메일함"])
     end
@@ -127,23 +147,30 @@ export const sideProjects = [
     ],
     devItems: [
       {
-        heading: '종목 시딩/보강 배치', items: [
-          'SEC EDGAR 티커 목록 API로 신규 종목 시딩(stockSeedJob)',
-          'SEC 기업프로필 조회로 SIC 코드 기반 테마 매핑(stockThemeEnrichJob)',
-          'Naver 검색 API로 종목 한글명 보강(stockKoreanNameEnrichJob)'
+        heading: '종목 시딩 배치', items: [
+          'SEC EDGAR 티커 목록 + 나스닥/그 외 거래소 상장목록 + 토스증권 오픈 API 3개 소스로 신규 종목 시딩(stockSeedJob)',
+          '소스별 우선순위(SEC → 거래소 목록 → 토스)로 중복 없이 갭만 채우도록 설계'
         ]
       },
       {
-        heading: '뉴스 다이제스트 배치', items: [
-          'cron 스케줄러로 매일 활성 유저 조회 후 관심종목별 Naver 뉴스 검색',
-          '유저 20명 단위 청크 분할 + 전용 스레드풀(newsDispatchTaskExecutor)로 병렬 처리',
-          '다이제스트 메일 발송 및 배치 이력/좀비 배치 정리 스케줄러 별도 구성'
+        heading: '종목 데이터 보강/검증 배치', items: [
+          'SEC 기업프로필 조회로 SIC 코드 기반 테마 매핑(stockThemeEnrichJob)',
+          'Naver 검색 API로 종목 한글명/영문명 보강(stockKoreanNameEnrichJob, stockEnglishNameEnrichJob)',
+          'Naver/Finnhub 조회로 종목 상세정보 보강(stockDetailEnrichJob), 상장폐지 여부 판별(stockDelistCheckJob)'
+        ]
+      },
+      {
+        heading: '종목 뉴스 수집/다이제스트 배치', items: [
+          'ACTIVE 종목 전체를 대상으로 Naver 뉴스를 조회해 TB_STOCK_NEWS에 적재(stockNewsCollectJob), URL 기준 중복 수집 방지',
+          '종목 20개 단위 청크 분할 + 전용 스레드풀(stockNewsCollectTaskExecutor)로 병렬 처리, 7일 보관 정책은 별도 정리 스케줄러가 처리',
+          'cron 스케줄러로 매일 활성 유저 조회 후 관심종목별 Naver 뉴스 검색·다이제스트 메일 발송(newsDispatchJob), 유저 20명 단위 청크 병렬 처리',
+          '배치 이력/좀비 배치 정리 스케줄러 별도 구성'
         ]
       },
       {
         heading: 'API/인증', items: [
-          '세션 기반 회원가입/로그인 및 이메일 인증 API 개발',
-          '관심종목 등록/조회 CRUD API 개발',
+          '세션 기반 회원가입/로그인/비밀번호 재설정 인증 흐름 및 이메일 인증 API 개발, 세션 타임아웃 명시적 설정',
+          '관심종목 등록/조회 CRUD API, 종목 검색/상세조회 통계 로그 및 인기종목 조회 API 개발',
           '공통 ApiResponseAdvice/GlobalExceptionHandler로 응답·에러 포맷 통일'
         ]
       },
