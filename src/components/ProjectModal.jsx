@@ -45,6 +45,13 @@ export default function ProjectModal({ project, onClose }) {
               <p className="dialog-section-text">{p.overview}</p>
             </section>
 
+            {p.contribution && (
+              <section className="dialog-section">
+                <div className="dialog-section-heading"><i className="ph ph-user-focus" />기여도</div>
+                <p className="dialog-section-text">{p.contribution}</p>
+              </section>
+            )}
+
             {p.stack && (
               <section className="dialog-section">
                 <div className="dialog-section-heading"><i className="ph ph-stack" />주요 기술 스택</div>

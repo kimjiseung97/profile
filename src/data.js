@@ -72,6 +72,7 @@ export const experience = [
 ];
 
 export const education = [
+  { school: '한국방송통신대학교', detail: '컴퓨터과학과 재학 (3학년 2학기)', period: '2026.09 - 재학중' },
   { school: '한림성심대학교', detail: '정보통신네트워크과 졸업', period: '2021.03 - 2023.02' },
   { school: '중앙정보기술 인재개발원', detail: '데이터융합 JAVA 기반 응용 SW개발자 양성과정 수료', period: '2022.12 - 2023.07' }
 ];
@@ -95,6 +96,7 @@ export const sideProjects = [
       'GCP VM + Docker Compose + Caddy 리버스 프록시로 자체 배포 및 CI/CD 구축'
     ],
     overview: '미국 주식 유니버스를 SEC·나스닥·토스증권 등 여러 소스로 시딩하고, 테마·종목명·상세정보 보강과 상장폐지 감지까지 이어지는 데이터 검증 배치 파이프라인을 직접 설계했습니다. 회원가입한 사용자가 관심종목을 등록하면 매일 해당 종목 관련 뉴스를 모아 이메일로 발송해주는 개인 사이드 프로젝트로, Kotlin + Spring Boot 백엔드와 React + TypeScript 프론트엔드를 하나의 저장소에서 함께 운영하며 기획부터 설계·개발·배포까지 전 과정을 직접 진행했습니다.',
+    contribution: '기획, DB 설계, 배치/아키텍처 설계, 서버 배포 및 CI/CD 구축까지 React + TypeScript 프론트엔드 구현을 제외한 전 영역을 직접 진행했습니다 (AI 코드어시스턴트는 방향을 직접 지시하며 보조 도구로 활용).',
     stack: ['Kotlin', 'Spring Boot 4.1', 'Spring Batch', 'QueryDSL', 'MySQL/MariaDB', 'React 19', 'TypeScript', 'Vite', 'Docker', 'GitHub Actions'],
     architecture: [
       {
