@@ -23,7 +23,8 @@ export const experience = [
         'DB 명세서 및 ISMS 관련 제출작업 자동화 구축',
         'ETH, TRX 네트워크 Octet 연동 및 메인넷 기반 토큰 확장성을 고려한 출금 시스템 구축',
         'AI를 활용한 프로젝트 초도 구조 설계, 테이블 설계 및 비즈니스 로직 설계',
-        '입출금 연동 외부업체 소통 담당'
+        '입출금 연동 외부업체 소통 담당',
+        'QueryDSL 대비 타입 안전성과 SQL 표현력을 갖춘 jOOQ 도입 및 팀 내 공유'
       ]
     }]
   },
@@ -194,10 +195,11 @@ export const projects = [
       'DB 명세서 및 ISMS 관련 제출작업 자동화 구축',
       'ETH, TRX 네트워크 Octet 연동 및 메인넷 기반 토큰 확장성을 고려한 출금 시스템 구축',
       'AI를 활용한 프로젝트 초도 구조 설계, 테이블 설계 및 비즈니스 로직 설계',
-      '입출금 연동 외부업체 소통 담당'
+      '입출금 연동 외부업체 소통 담당',
+      'jOOQ 도입 및 팀원 대상 공유 세션 진행'
     ],
     overview: '프라뱅은 가상자산 거래를 지원하는 중앙화 거래소(CEX)입니다. Polygon network 기반의 SUT(수퍼트러스트) 코인 거래 서비스를 시작으로 거래를 지원하고 있으며, 지속적인 네트워크 추가와 입출금 지원을 통해 사업을 확장해 나갈 예정입니다.',
-    stack: ['Java', 'Spring Boot', 'Redis', 'MySQL', 'PostgreSQL', 'QueryDSL', 'Spring JPA', 'RabbitMQ'],
+    stack: ['Java', 'Spring Boot', 'Redis', 'MySQL', 'PostgreSQL', 'QueryDSL', 'jOOQ', 'Spring JPA', 'RabbitMQ'],
     devItems: [
       {
         heading: 'API WAS', items: [
@@ -206,7 +208,9 @@ export const projects = [
           '공통 규격정의 및 공통 Exception 정의',
           'QueryDSL 도입',
           '매수·매도 로직 간략화 및 가독성 향상 리팩토링',
-          'Open API용 주문 취소 기능 구현 및 기존 소스코드 리팩토링'
+          'Open API용 주문 취소 기능 구현 및 기존 소스코드 리팩토링',
+          '동적 조건이 많은 조회 쿼리에 jOOQ 도입, 생성된 코드 기반 타입 안전 쿼리 작성',
+          'jOOQ 도입 배경·설정 방법·QueryDSL과의 차이를 정리해 팀원들에게 공유'
         ]
       },
       {
@@ -231,7 +235,8 @@ export const projects = [
           'Mybatis 도입 및 로그 설정 재정의로 유지보수 안정성 강화',
           '공통 규격정의 및 공통 Exception 정의로 에러 처리 시나리오 및 API 직관성 강화',
           'QueryDSL 도입으로 여러 엔티티 간 join 쿼리의 직관성 및 유지보수 편의성 향상',
-          '복잡한 매수·매도 로직 레거시 소스코드 간략화 및 쿼리 로직 이관으로 속도·트랜잭션 안정성 강화'
+          '복잡한 매수·매도 로직 레거시 소스코드 간략화 및 쿼리 로직 이관으로 속도·트랜잭션 안정성 강화',
+          'jOOQ 도입으로 복잡한 동적 조회 쿼리의 타입 안전성 및 가독성 향상, 팀 공유를 통한 팀 전체 쿼리 작성 방식 개선'
         ]
       },
       {
